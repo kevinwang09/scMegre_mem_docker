@@ -1,5 +1,3 @@
-# DO NOT EDIT 'install.R'; instead, edit 'install.R.in' and
-# use 'rake' to generate 'install.R'.
-
+BiocManager::install("SingleCellExperiment", version = "3.10", update = TRUE, ask = FALSE)
 install.packages("devtools", repos="https://cran.rstudio.com")
-devtools::install_github("SydneyBioX/scMerge", ref = "master")
+devtools::install_github("SydneyBioX/scMerge", ref = "biocsing")
