@@ -1,3 +1,3 @@
-BiocManager::install("SingleCellExperiment", version = "3.10", update = TRUE, ask = FALSE)
+BiocManager::install("SingleCellExperiment", "DelayedArray", "DelayedMatrixStats", "BiocSingular", version = "3.10", update = TRUE, ask = FALSE)
 install.packages("devtools", repos="https://cran.rstudio.com")
 devtools::install_github("SydneyBioX/scMerge", ref = "biocsing")
