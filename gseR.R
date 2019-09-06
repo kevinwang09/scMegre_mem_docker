@@ -12,7 +12,7 @@ gce_global_zone(zone)
 (tag = gce_tag_container(""))
 
 vm <- gce_vm(template = "rstudio", 
-             name = "scmerge_mem",
+             name = "scmergev116",
              disk_size_gb = 10,
              predefined_type = "n1-standard-4",
              dynamic_image = tag,

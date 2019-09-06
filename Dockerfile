@@ -4,34 +4,11 @@
 
 # The suggested name for this image is: bioconductor/release_base.
 
-FROM bioconductor/release_core2
+FROM gcr.io/scmerge/scmerge_mem_docker:master
 
 MAINTAINER kevin.wang@sydney.edu.au
 
 ADD install.R /home/
-ADD setup.R /home/rstudio/
- 
-# Make a tmp folder and git clone
-# All git files will then be copied to /home/SingleCellPlus/
-RUN mkdir /home/tmp/
-RUN git clone https://github.com/SydneyBioX/SingleCellPlus /home/tmp/
-RUN mkdir /home/SingleCellPlus/
-RUN cp -r /home/tmp/* /home/SingleCellPlus/
-# We will remove these data since we will have another copy from Google Cloud Storage
-RUN ls /home/
-RUN ls /home/SingleCellPlus/
 
-
-
-# wget all data files from Google Cloud Storage into /home/SingleCellPlus/
-RUN wget https://storage.googleapis.com/scp_data/data.zip -P /home/
-RUN cd /home/ && unzip ./data.zip
-RUN ls /home/
-RUN ls /home/SingleCellPlus/
-
-
-# Running tests
+# Running install
 RUN R -f /home/install.R
-RUN R -e 'knitr::purl("/home/SingleCellPlus/qc.Rmd", output = "/home/SingleCellPlus/qc.R")'
-RUN R -e 'knitr::purl("/home/SingleCellPlus/scMerge.Rmd", output = "/home/SingleCellPlus/scMerge.R")'
-RUN R -e 'knitr::purl("/home/SingleCellPlus/downstream.Rmd", output = "/home/SingleCellPlus/downstream.R")'
