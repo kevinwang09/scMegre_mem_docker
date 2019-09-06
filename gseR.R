@@ -1,7 +1,6 @@
 library(googleComputeEngineR)
 project = "scmerge"
 zone = "australia-southeast1-a"
-# zone = "asia-east2-a" ## Hong Kong server
 
 gce_global_project(project)
 gce_global_zone(zone)
