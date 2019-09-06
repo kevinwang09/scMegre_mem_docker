@@ -8,12 +8,12 @@ gce_global_zone(zone)
 # gce_list_zones(project)
 # View(gce_list_machinetype()$items)
 
-(tag = gce_tag_container(""))
+(tag = "gcr.io/scmerge/scmerge_mem_docker:biocsing")
 
 vm <- gce_vm(template = "rstudio", 
-             name = "scmergev116",
+             name = "scmergebiocsing",
              disk_size_gb = 10,
-             predefined_type = "n1-standard-4",
+             predefined_type = "n1-standard-1",
              dynamic_image = tag,
              user = "rstudio", 
              password = "pushu")
