@@ -11,17 +11,30 @@ profvis::profvis({
     kmeansK = c(3, 3),
     assay_name = 'scMerge')
 })
-scater::plotPCA(sce_mESC, colour_by = 'cellTypes', shape = 'batch',
-                run_args = list(exprs_values = 'logcounts'))
-scater::plotPCA(sce_mESC, colour_by = 'cellTypes', shape = 'batch',
-                run_args = list(exprs_values = 'scMerge'))
+# scater::plotPCA(sce_mESC, colour_by = 'cellTypes', shape = 'batch',
+#                 run_args = list(exprs_values = 'logcounts'))
+# scater::plotPCA(sce_mESC, colour_by = 'cellTypes', shape = 'batch',
+#                 run_args = list(exprs_values = 'scMerge'))
+#######################################
+example_da = example_sce
+assay(example_da, "counts") = DelayedArray(assay(example_da, "counts"))
+assay(example_da, "logcounts") = DelayedArray(assay(example_da, "logcounts"))
 
-
+profvis::profvis({
+  example_da <- scMerge(
+    sce_combine = example_sce,
+    ctl = segList_ensemblGeneID$mouse$mouse_scSEG,
+    kmeansK = c(3, 3),
+    assay_name = 'scMerge')
+})
 #######################################
 example_sp = example_sce
 ## Assuming that the counts and logcounts slots are dgCMatrix
 assay(example_sp, "counts") = as(assay(example_sce, "counts"), "dgCMatrix")
 assay(example_sp, "logcounts") = as(assay(example_sce, "logcounts"), "dgCMatrix")
+
+# assay(example_sp, "counts") = DelayedArray(as(assay(example_sce, "counts"), "dgCMatrix"))
+# assay(example_sp, "logcounts") = DelayedArray(as(assay(example_sce, "logcounts"), "dgCMatrix"))
 
 profvis::profvis({
 sce_mESC_sp <- scMerge(
@@ -30,7 +43,7 @@ sce_mESC_sp <- scMerge(
   kmeansK = c(3, 3),
   assay_name = 'scMerge')
 })
-
+#################################
 example_hd = example_sce
 ## Assuming that the counts and logcounts slots are HDF5Array
 assay(example_hd, "counts") = as(assay(example_sce, "counts"), "HDF5Array")

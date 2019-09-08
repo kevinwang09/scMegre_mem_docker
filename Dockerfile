@@ -10,6 +10,7 @@ MAINTAINER kevin.wang@sydney.edu.au
 
 ADD install.R /home/
 ADD create_liver.R /home/rstudio/
+ADD datadim_sim.R /home/rstudio/
 
 # Running install
 RUN R -f /home/install.R
