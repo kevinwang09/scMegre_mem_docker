@@ -18,7 +18,7 @@ plan(multisession, workers = length(num_cells))
 
 listSim = furrr::future_map(
   .x = num_cells,
-  .f = ~ scMerge::ruvSimulate(m = .x, n = 20000, lambda = 0.1, sce = TRUE),
+  .f = ~ scMerge::ruvSimulate(m = .x, n = 20000, lambda = 0.2, sce = TRUE),
   .progress = TRUE)
 
 purrr::map_dbl(listSim, ~mean(assay(.x, "counts") == 0))
@@ -28,7 +28,8 @@ one_run = function(obj){
     scmerge <-  scMerge::scMerge(sce_combine = obj,
                                  ctl = paste0('gene', 1:500),
                                  cell_type = obj$cellTypes,
-                                 ruvK = 10, assay_name = "scMerge_sim")
+                                 ruvK = 10, assay_name = "scMerge_sim",
+                                 replicate_prop = 1)
   )
   mem_obj = pryr::object_size(scmerge)
   mem_total = mem_comp + mem_obj
@@ -72,12 +73,12 @@ make_output = function(output){
   return(result)
 }
 ##########################################
-# list_matrix_output = furrr::future_map(
-#   .x = listSim[1:2],
-#   .f = ~ one_run(.x),
-#   .progress = TRUE)
+list_matrix_output = furrr::future_map(
+  .x = listSim,
+  .f = ~ one_run(.x),
+  .progress = TRUE)
 
-list_matrix_output = mclapply(listSim, one_run, mc.cores = length(num_cells))
+# list_matrix_output = mclapply(listSim, one_run, mc.cores = length(num_cells))
 
 matrix_df = make_output(list_matrix_output) %>% 
   dplyr::mutate(type = "matrix")
