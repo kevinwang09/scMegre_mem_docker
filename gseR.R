@@ -12,8 +12,8 @@ gce_global_zone(zone)
 
 vm <- gce_vm(template = "rstudio", 
              name = "biocsing",
-             disk_size_gb = 10,
-             predefined_type = "n1-standard-4",
+             disk_size_gb = 20,
+             predefined_type = "n1-standard-8",
              dynamic_image = tag,
              user = "rstudio", 
              password = "pushu")
