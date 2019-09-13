@@ -3,6 +3,7 @@ BiocManager::install(c("SingleCellExperiment", "DelayedArray",
                        "pryr", "profvis",
                        "tidyverse", "furrr", 
                        "Matrix", "TENxPBMCData",
-                       "scater", "M3Drop", "ruv"), version = "3.10", update = TRUE, ask = FALSE)
+                       "scater", "M3Drop", 
+                       "ruv", "devtools"), version = "3.10", update = TRUE, ask = FALSE)
 
 BiocManager::install("SydneyBioX/scMerge", ref = "biocsing")

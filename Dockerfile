@@ -1,7 +1,3 @@
-# DO NOT EDIT FILES CALLED 'Dockerfile'; they are automatically
-# generated. Edit 'Dockerfile.in' and generate the 'Dockerfile'
-# with the 'rake' command.
-
 # The suggested name for this image is: bioconductor/release_base.
 
 FROM gcr.io/scmerge/scmerge_mem_docker:master
