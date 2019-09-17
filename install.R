@@ -4,6 +4,7 @@ BiocManager::install(c("SingleCellExperiment", "DelayedArray",
                        "tidyverse", "furrr", 
                        "Matrix", "TENxPBMCData",
                        "scater", "M3Drop", 
-                       "ruv", "devtools"), version = "3.10", update = TRUE, ask = FALSE)
+                       "ruv", "devtools",
+                       "hadley/lineprof"), version = "3.10", update = TRUE, ask = FALSE)
 
 BiocManager::install("SydneyBioX/scMerge", ref = "biocsing")

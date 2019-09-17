@@ -25,13 +25,24 @@ pbmc_combine = scMerge::sce_cbind(list(pbmc3k = pbmc3k, pbmc4k = pbmc4k),
 dim(pbmc_combine)
 data("segList_ensemblGeneID")
 colnames(pbmc_combine) = paste0("gene", seq_len(ncol(pbmc_combine)))
-SummarizedExperiment::assay(pbmc_combine, "counts") = as.matrix(SummarizedExperiment::assay(pbmc_combine, "counts"))
-SummarizedExperiment::assay(pbmc_combine, "logcounts") = as.matrix(SummarizedExperiment::assay(pbmc_combine, "logcounts"))
-scMerge::scMerge(
+
+obj1 = scMerge::scMerge(
   sce_combine = pbmc_combine,
   ctl = segList_ensemblGeneID$human$human_scSEG,
   kmeansK = c(10, 10),
-  assay_name = "scMerge_unsupervised", 
+  assay_name = "scMerge_unsupervised2", 
   verbose = TRUE,
-  BPPARAM = BiocParallel::MulticoreParam(workers = 6),
+  BPPARAM = BiocParallel::SerialParam(),
+  BSPARAM = BiocSingular::IrlbaParam(fold = 5))
+
+
+SummarizedExperiment::assay(pbmc_combine, "counts") = as.matrix(SummarizedExperiment::assay(pbmc_combine, "counts"))
+SummarizedExperiment::assay(pbmc_combine, "logcounts") = as.matrix(SummarizedExperiment::assay(pbmc_combine, "logcounts"))
+obj2 = scMerge::scMerge(
+  sce_combine = pbmc_combine,
+  ctl = segList_ensemblGeneID$human$human_scSEG,
+  kmeansK = c(10, 10),
+  assay_name = "scMerge_unsupervised2", 
+  verbose = TRUE,
+  BPPARAM = BiocParallel::SerialParam(),
   BSPARAM = BiocSingular::IrlbaParam(fold = 5))
