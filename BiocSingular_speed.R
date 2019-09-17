@@ -11,9 +11,9 @@ p = 20000
 n = c(500, 1000, 2000, 5000)
 k = c(10)
 
-BSPARAM = c(ExactParam(fold = 2),
-            IrlbaParam(fold = 2), 
-            RandomParam(fold = 2))
+BSPARAM = c(ExactParam(fold = Inf),
+            IrlbaParam(fold = Inf), 
+            RandomParam(fold = Inf))
 
 oneset_grid = expand.grid(n = n, p = p, k = k) %>% 
   as_tibble() %>% 
@@ -67,4 +67,5 @@ comp_tibble %>%
   scale_y_log10(breaks = c(10, 100, 200, 500, 700, 800, 1000, 1200, 1500, 2000, 2200, 3000)) +
   facet_grid(~mat_key)
 
+# ggsave(filename = "BiocSingular_speed_fold2.pdf")
   ## What about accuracy of the decomp?

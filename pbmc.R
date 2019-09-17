@@ -33,7 +33,7 @@ obj1 = scMerge::scMerge(
   assay_name = "scMerge_unsupervised2", 
   verbose = TRUE,
   BPPARAM = BiocParallel::SerialParam(),
-  BSPARAM = BiocSingular::IrlbaParam(fold = 5))
+  BSPARAM = BiocSingular::IrlbaParam(fold = Inf))
 
 
 SummarizedExperiment::assay(pbmc_combine, "counts") = as.matrix(SummarizedExperiment::assay(pbmc_combine, "counts"))
@@ -45,4 +45,4 @@ obj2 = scMerge::scMerge(
   assay_name = "scMerge_unsupervised2", 
   verbose = TRUE,
   BPPARAM = BiocParallel::SerialParam(),
-  BSPARAM = BiocSingular::IrlbaParam(fold = 5))
+  BSPARAM = BiocSingular::IrlbaParam(fold = Inf))
