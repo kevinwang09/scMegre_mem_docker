@@ -8,8 +8,8 @@ library(tidyr)
 set.seed(1234)
 
 p = 20000
-n = c(500, 1000, 2000, 5000)
-k = c(10)
+n = c(500, 1000)
+k = c(10, 20, 50, 100)
 
 BSPARAM = c(ExactParam(fold = Inf),
             IrlbaParam(fold = Inf), 
@@ -56,6 +56,8 @@ comp_result = mcmapply(
 
 comp_tibble = grid %>% 
   dplyr::mutate(time = purrr::map_dbl(comp_result, "time"),
+                etibble = purrr::map(comp_result, ~ tibble(evalues = .x$svd_obj$d,
+                                                           eindex = seq_along(evalues))),
                 bsparam_class = purrr::map_chr(bsparam, class),
                 k = factor(k))
 
@@ -64,8 +66,28 @@ comp_tibble %>%
              colour = bsparam_class, group = interaction(k, bsparam_class))) + 
   geom_point() +
   geom_line() +
-  scale_y_log10(breaks = c(10, 100, 200, 500, 700, 800, 1000, 1200, 1500, 2000, 2200, 3000)) +
+  scale_y_log10(breaks = c(10, 100, 200, 500, 700, 800, 1000, 1200, 1500, 2000, 2200, 3000, 5000, 10000)) +
   facet_grid(~mat_key)
+
+
+comp_tibble %>% 
+  dplyr::select(n, p, k, mat_key, etibble, bsparam_class) %>% 
+  dplyr::filter(mat_key == "A_mat") %>% 
+  tidyr::unnest(cols = etibble) %>% 
+  tidyr::spread(key = bsparam_class,
+                value = evalues) %>% 
+  tidyr::gather(key = evalues_approx_class,
+                value = evalues_approx_value,
+                IrlbaParam, RandomParam) %>% 
+  ggplot(aes(x = ExactParam,
+             y = evalues_approx_value)) +
+  geom_point() +
+  # geom_abline(slope = 1, intercept = 0, colour = "red") +
+  # geom_smooth(method = "lm", se = F) +
+  facet_grid(evalues_approx_class ~ n, scales = "free")
+
+
+  
 
 # ggsave(filename = "BiocSingular_speed_fold2.pdf")
   ## What about accuracy of the decomp?

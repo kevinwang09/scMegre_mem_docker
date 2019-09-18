@@ -26,23 +26,31 @@ dim(pbmc_combine)
 data("segList_ensemblGeneID")
 colnames(pbmc_combine) = paste0("gene", seq_len(ncol(pbmc_combine)))
 
-obj1 = scMerge::scMerge(
-  sce_combine = pbmc_combine,
-  ctl = segList_ensemblGeneID$human$human_scSEG,
-  kmeansK = c(10, 10),
-  assay_name = "scMerge_unsupervised2", 
-  verbose = TRUE,
-  BPPARAM = BiocParallel::SerialParam(),
-  BSPARAM = BiocSingular::IrlbaParam(fold = Inf))
+# p1 = lineprof::lineprof(code = {
+  obj1 <- scMerge::scMerge(
+    sce_combine = pbmc_combine,
+    ctl = segList_ensemblGeneID$human$human_scSEG,
+    kmeansK = c(10, 10),
+    assay_name = "scMerge_unsupervised2", 
+    verbose = TRUE,
+    BPPARAM = BiocParallel::SerialParam(),
+    svd_prop = 0.01,
+    BSPARAM = BiocSingular::RandomParam(fold = Inf),
+    BACKEND = "HDF5Array")
+# }, interval = 0.1)
 
 
 SummarizedExperiment::assay(pbmc_combine, "counts") = as.matrix(SummarizedExperiment::assay(pbmc_combine, "counts"))
 SummarizedExperiment::assay(pbmc_combine, "logcounts") = as.matrix(SummarizedExperiment::assay(pbmc_combine, "logcounts"))
-obj2 = scMerge::scMerge(
-  sce_combine = pbmc_combine,
-  ctl = segList_ensemblGeneID$human$human_scSEG,
-  kmeansK = c(10, 10),
-  assay_name = "scMerge_unsupervised2", 
-  verbose = TRUE,
-  BPPARAM = BiocParallel::SerialParam(),
-  BSPARAM = BiocSingular::IrlbaParam(fold = Inf))
+
+# p2 = lineprof::lineprof(code = {
+  obj2 <- scMerge::scMerge(
+    sce_combine = pbmc_combine,
+    ctl = segList_ensemblGeneID$human$human_scSEG,
+    kmeansK = c(10, 10),
+    assay_name = "scMerge_unsupervised2", 
+    verbose = TRUE,
+    BPPARAM = BiocParallel::SerialParam(),
+    svd_prop = 0.01,
+    BSPARAM = BiocSingular::RandomParam(fold = Inf))
+# }, interval = 0.1)
