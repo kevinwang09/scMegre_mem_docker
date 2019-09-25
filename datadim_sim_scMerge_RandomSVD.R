@@ -11,14 +11,14 @@ library(tidyverse)
 
 
 set.seed(1234)
-# num_cells = c(100, 200, 500, 1000, 2000, 5000, 10000)
-num_cells = c(50, 100, 200, 500)
-plan(multisession, workers = length(num_cells))
+num_cells = c(100, 200, 500, 1000)
+# num_cells = c(100, 200)
+# plan(multisession, workers = length(num_cells))
 # options(future.globals.maxSize = 50000*1024^2)
 
 listSim = furrr::future_map(
   .x = num_cells,
-  .f = ~ scMerge::ruvSimulate(m = .x, n = 20000, lambda = 0.2, sce = TRUE),
+  .f = ~ scMerge::ruvSimulate(m = .x, n = 20000, lambda = 0.1, sce = TRUE),
   .progress = TRUE)
 
 purrr::map_dbl(listSim, ~mean(assay(.x, "counts") == 0))
@@ -29,11 +29,12 @@ one_run = function(obj){
                                  ctl = paste0('gene', 1:500),
                                  cell_type = obj$cellTypes,
                                  ruvK = 10, assay_name = "scMerge_sim",
-                                 replicate_prop = 1)
+                                 replicate_prop = 1, 
+                                 BSPARAM = BiocSingular::RandomParam())
   )
   mem_obj = pryr::object_size(scmerge)
   mem_total = mem_comp + mem_obj
-  result = list(scmerge = scmerge,
+  result = list(time = scmerge@metadata$timeRuv + scmerge@metadata$timeReplicates,
                 mem_comp = mem_comp,
                 mem_obj = mem_obj,
                 mem_total = mem_total)
@@ -55,8 +56,7 @@ convert_hdf = function(obj){
 }
 ##########################################
 make_output = function(output){
-  time = purrr::map(.x = output,
-                    .f = ~ .x$scmerge@metadata$timeRuv) %>% 
+  time = purrr::map(.x = output, "time") %>% 
     purrr::map_dbl(.f = ~ as.numeric(.x, units = "secs"))
   
   mem_total = purrr::map_dbl(.x = output, .f = ~ .x$mem_total)/1e9
@@ -73,12 +73,12 @@ make_output = function(output){
   return(result)
 }
 ##########################################
-list_matrix_output = furrr::future_map(
-  .x = listSim,
-  .f = ~ one_run(.x),
-  .progress = TRUE)
+# list_matrix_output = furrr::future_map(
+#   .x = listSim,
+#   .f = ~ one_run(.x),
+#   .progress = TRUE)
 
-# list_matrix_output = mclapply(listSim, one_run, mc.cores = length(num_cells))
+list_matrix_output = mclapply(listSim, one_run, mc.cores = length(num_cells))
 
 matrix_df = make_output(list_matrix_output) %>% 
   dplyr::mutate(type = "matrix")
@@ -86,12 +86,12 @@ matrix_df = make_output(list_matrix_output) %>%
 # mem_change(rm(list_matrix_output))
 ##########################################
 listSim_sparse = listSim %>% purrr::map(convert_sparse)
-list_sparse_output = furrr::future_map(
-  .x = listSim_sparse,
-  .f = ~ one_run(.x),
-  .progress = TRUE)
+# list_sparse_output = furrr::future_map(
+#   .x = listSim_sparse,
+#   .f = ~ one_run(.x),
+#   .progress = TRUE)
 
-# list_sparse_output = mclapply(listSim_sparse, one_run, mc.cores = length(num_cells))
+list_sparse_output = mclapply(listSim_sparse, one_run, mc.cores = length(num_cells))
 # one_run(listSim_sparse[[3]])
 
 sparse_df = make_output(list_sparse_output) %>%
@@ -100,12 +100,12 @@ sparse_df = make_output(list_sparse_output) %>%
 # mem_change(rm(listSim_sparse))
 ##########################################
 listSim_hdf = listSim %>% purrr::map(convert_hdf)
-list_hdf_output = furrr::future_map(
-  .x = listSim_hdf,
-  .f = ~ one_run(.x),
-  .progress = TRUE)
+# list_hdf_output = furrr::future_map(
+#   .x = listSim_hdf,
+#   .f = ~ one_run(.x),
+#   .progress = TRUE)
 
-# list_hdf_output = mclapply(listSim_hdf, one_run, mc.cores = length(num_cells))
+list_hdf_output = mclapply(listSim_hdf, one_run, mc.cores = length(num_cells))
 
 hdf_df = make_output(list_hdf_output) %>%
   dplyr::mutate(type = "hdf5")
@@ -139,38 +139,3 @@ combine_df %>%
   theme_bw(14) +
   theme(legend.position = "bottom",
         panel.grid.minor = element_blank())
-
-# combine_df %>%
-#   ggplot(aes(x = as.factor(num_cells),
-#              y = time,
-#              colour = type,
-#              group = type)) +
-#   geom_point(size = 2) +
-#   geom_line(size = 1.2) +
-#   # scale_y_log10(breaks = c(1, 5, 10, 20, 50, 100, 200, 500, 1000, 1500)) +
-#   scale_color_brewer(palette = "Set1") +
-#   labs(x = "Number of cells",
-#        y = "Time (s)",
-#        title = "Computational time of scMerge",
-#        subtitle = "Number of genes fixed at 20,000") +
-#   theme_bw(14) +
-#   theme(legend.position = "bottom",
-#         panel.grid.minor = element_blank())
-# 
-# 
-# combine_df %>%
-#   ggplot(aes(x = as.factor(num_cells),
-#              y = mem,
-#              colour = type,
-#              group = type)) +
-#   geom_point(size = 2) +
-#   geom_line(size = 1.2) +
-#   # scale_y_log10(breaks = c(1, 5, 10, 20, 50, 100, 200, 500, 1000, 1500)) +
-#   scale_color_brewer(palette = "Set1") +
-#   labs(x = "Number of cells",
-#        y = "Memory (GB)",
-#        title = "Computational memory usage of scMerge",
-#        subtitle = "Number of genes fixed at 20,000") +
-#   theme_bw(14) +
-#   theme(legend.position = "bottom",
-#         panel.grid.minor = element_blank())

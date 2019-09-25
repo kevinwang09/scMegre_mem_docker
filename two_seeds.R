@@ -19,3 +19,24 @@
 # 
 # realize(C, BACKEND = class(seed(hdf_A))) ## This fails, hence my question
 # ```
+
+################################
+# Apologies, I am new to the whole DA framework. 
+# How could I achieve the same speed for matrix multiplication for `matrix` and `DelayedArray` with the same seed?
+
+library(DelayedArray)
+set.seed(123)
+n = 100
+p = 1000
+
+A_mat = matrix(rpois(n*p, lambda = 0.1), nrow = p)
+B_mat = matrix(rpois(n*p, lambda = 0.1), nrow = n)
+A_mat_da = DelayedArray::DelayedArray(A_mat)
+B_mat_da = DelayedArray::DelayedArray(B_mat)
+system.time(A_mat %*% B_mat)
+system.time(A_mat_da %*% B_mat_da)
+
+DelayedArray::setAutoBlockSize(size = 1e9)
+DelayedArray::setAutoBPPARAM(BPPARAM = BiocParallel::MulticoreParam(workers = 5))
+DelayedArray::getAutoBPPARAM()
+system.time(A_mat_da %*% B_mat_da)
