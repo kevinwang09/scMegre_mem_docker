@@ -2,7 +2,6 @@ library(TENxPBMCData)
 library(SummarizedExperiment)
 library(scMerge)
 library(scater)
-
 pbmc3k <- TENxPBMCData('pbmc3k')
 pbmc4k <- TENxPBMCData('pbmc4k')
 
@@ -26,8 +25,8 @@ dim(pbmc_combine)
 data("segList_ensemblGeneID")
 colnames(pbmc_combine) = paste0("gene", seq_len(ncol(pbmc_combine)))
 ##################################
-# p1 = lineprof::lineprof(code = {
-system.time(
+p1 = lineprof::lineprof(code = {
+# system.time(
   obj1 <- scMerge::scMerge(
     sce_combine = pbmc_combine,
     ctl = segList_ensemblGeneID$human$human_scSEG,
@@ -35,11 +34,11 @@ system.time(
     assay_name = "scMerge_unsupervised2", 
     verbose = TRUE,
     BPPARAM = BiocParallel::SerialParam(),
-    svd_k = 50,
+    svd_k = 20,
     BSPARAM = BiocSingular::RandomParam(fold = Inf),
     BACKEND = "HDF5Array")
-)
-# }, interval = 1)
+# )
+}, interval = 0.5)
 
 
 SummarizedExperiment::assay(pbmc_combine, "counts") = as.matrix(SummarizedExperiment::assay(pbmc_combine, "counts"))
@@ -54,7 +53,32 @@ p2 = lineprof::lineprof(code = {
     assay_name = "scMerge_unsupervised2", 
     verbose = TRUE,
     BPPARAM = BiocParallel::SerialParam(),
-    svd_k = 50,
+    svd_k = 20,
     BSPARAM = BiocSingular::RandomParam(fold = Inf))
 # )
 }, interval = 0.5)
+
+
+obj1@metadata$timeRuv + obj1@metadata$timeReplicates
+sum(print(p1)$time)
+sum(print(p1)$alloc)
+
+
+obj2@metadata$timeRuv + obj2@metadata$timeReplicates
+sum(print(p2)$time)
+sum(print(p2)$alloc)
+
+
+scater::plotPCA(obj1, colour_by = 'batch',
+                run_args = list(exprs_values = 'logcounts'))
+
+scater::plotPCA(obj1, colour_by = 'batch',
+                run_args = list(exprs_values = 'scMerge_unsupervised1'))
+
+############################
+
+scater::plotPCA(obj2, colour_by = 'batch',
+                run_args = list(exprs_values = 'logcounts'))
+
+scater::plotPCA(obj2, colour_by = 'batch',
+                run_args = list(exprs_values = 'scMerge_unsupervised2'))
