@@ -45,8 +45,8 @@ system.time(
 SummarizedExperiment::assay(pbmc_combine, "counts") = as.matrix(SummarizedExperiment::assay(pbmc_combine, "counts"))
 SummarizedExperiment::assay(pbmc_combine, "logcounts") = as.matrix(SummarizedExperiment::assay(pbmc_combine, "logcounts"))
 
-# p2 = lineprof::lineprof(code = {
-system.time(
+p2 = lineprof::lineprof(code = {
+# system.time(
   obj2 <- scMerge::scMerge(
     sce_combine = pbmc_combine,
     ctl = segList_ensemblGeneID$human$human_scSEG,
@@ -56,5 +56,5 @@ system.time(
     BPPARAM = BiocParallel::SerialParam(),
     svd_k = 50,
     BSPARAM = BiocSingular::RandomParam(fold = Inf))
-)
-# }, interval = 1)
+# )
+}, interval = 0.5)
