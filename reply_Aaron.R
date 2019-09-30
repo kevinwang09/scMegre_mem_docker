@@ -56,5 +56,6 @@ time_plot = df %>%
 
 
 
-ggsave(filename = "./figures/mem_plot.pdf")
-ggsave(filename = "./figures/time_plot.pdf")
+ggsave(filename = "./figures/mem_plot.pdf", plot = mem_plot)
+ggsave(filename = "./figures/time_plot.pdf", plot = time_plot)
+
