@@ -1,9 +1,9 @@
 library(tidyverse)
 load("standard-4_pbmc_profile_k20_f8fdf26.RData")
-df1 = print(p1, depth = 2) %>% 
+df1 = print(p1, depth = 3) %>% 
   dplyr::mutate(mat_type = "DelayedArray+HDF5Array",
                 machine_type = "15GB mem")
-df2 = print(p2, depth = 2) %>% 
+df2 = print(p2, depth = 3) %>% 
   dplyr::mutate(mat_type = "matrix",
                 machine_type = "15GB mem")
 
@@ -11,10 +11,10 @@ mem15_df = bind_rows(df1, df2)
 
 
 load("standard-8_pbmc_profile_k20_f8fdf26.RData")
-df1 = print(p1, depth = 2) %>% 
+df1 = print(p1, depth = 3) %>% 
   dplyr::mutate(mat_type = "DelayedArray+HDF5Array",
                 machine_type = "30GB mem")
-df2 = print(p2, depth = 2) %>% 
+df2 = print(p2, depth = 3) %>% 
   dplyr::mutate(mat_type = "matrix",
                 machine_type = "30GB mem")
 
@@ -34,7 +34,7 @@ mem_plot = df %>%
   ggplot(aes(x = fct_reorder(function_label, alloc), y = alloc,
              fill = mat_type)) +
   geom_col(position = "dodge") +
-  labs(x = "Function call (depth = 2)",
+  labs(x = "Function call (depth = 3)",
        y = "Memory allocated (Mb)",
        caption = "The pbmc data is 8734 rows and 6791 cols, 3.91MB as Delayed+HDF5Array and 713MB as matrix") +
   facet_wrap(~machine_type) +
@@ -47,7 +47,7 @@ time_plot = df %>%
   ggplot(aes(x = fct_reorder(function_label, time), y = time,
              fill = mat_type)) +
   geom_col(position = "dodge") +
-  labs(x = "Function call (depth = 2)",
+  labs(x = "Function call (depth = 3)",
        y = "Time (s)") +
   facet_wrap(~machine_type) +
   coord_flip() +
@@ -56,6 +56,8 @@ time_plot = df %>%
 
 
 
-ggsave(filename = "./figures/mem_plot.pdf", plot = mem_plot)
-ggsave(filename = "./figures/time_plot.pdf", plot = time_plot)
+ggsave(filename = "./figures/mem_plot.pdf", plot = mem_plot,
+       width = 12, height = 6)
+ggsave(filename = "./figures/time_plot.pdf", plot = time_plot,
+       width = 12, height = 6)
 
