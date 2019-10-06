@@ -11,9 +11,9 @@ gce_global_zone(zone)
 (tag = "gcr.io/scmerge/scmerge_mem_docker:gcbuild")
 
 vm <- gce_vm(template = "rstudio", 
-             name = "biocsing8",
+             name = "biocsing4",
              disk_size_gb = 20,
-             predefined_type = "n1-standard-8",
+             predefined_type = "n1-standard-4",
              dynamic_image = tag,
              user = "rstudio", 
              password = "pushu")

@@ -1,5 +1,5 @@
 library(tidyverse)
-load("standard-4_pbmc_profile_k20_f8fdf26.RData")
+load("standard-4_pbmc_profile_k20_96b9319.RData")
 df1 = print(p1, depth = 3) %>% 
   dplyr::mutate(mat_type = "DelayedArray+HDF5Array",
                 machine_type = "15GB mem")
@@ -10,7 +10,7 @@ df2 = print(p2, depth = 3) %>%
 mem15_df = bind_rows(df1, df2) 
 
 
-load("standard-8_pbmc_profile_k20_f8fdf26.RData")
+load("standard-8_pbmc_profile_k20_96b9319.RData")
 df1 = print(p1, depth = 3) %>% 
   dplyr::mutate(mat_type = "DelayedArray+HDF5Array",
                 machine_type = "30GB mem")
