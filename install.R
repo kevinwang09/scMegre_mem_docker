@@ -1,3 +1,4 @@
+BiocManager::install(version = "3.10", update = TRUE, ask = FALSE)
 BiocManager::install(c("SingleCellExperiment", "DelayedArray", 
                        "DelayedMatrixStats", "BiocSingular",
                        "pryr", "profvis",
