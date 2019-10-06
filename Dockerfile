@@ -1,6 +1,6 @@
 # The suggested name for this image is: bioconductor/release_base.
 
-FROM gcr.io/scmerge/scmerge_mem_docker:master
+FROM bioconductor/release_core2
 
 MAINTAINER kevin.wang@sydney.edu.au
 
