@@ -1,28 +1,28 @@
 library(tidyverse)
-load("standard-4_pbmc_profile_k20_96b9319.RData")
+load("standard-4_pbmc_profile_k20_f8fdf26.RData")
 df1 = print(p1, depth = 3) %>% 
   dplyr::mutate(mat_type = "DelayedArray+HDF5Array",
-                machine_type = "15GB mem")
+                machine_type = "f8fdf26")
 df2 = print(p2, depth = 3) %>% 
   dplyr::mutate(mat_type = "matrix",
-                machine_type = "15GB mem")
+                machine_type = "f8fdf26")
 
-mem15_df = bind_rows(df1, df2) 
+f8fdf26 = bind_rows(df1, df2) 
 
 
-load("standard-8_pbmc_profile_k20_96b9319.RData")
+load("standard-4_pbmc_profile_k20_bc1e1bc.RData")
 df1 = print(p1, depth = 3) %>% 
   dplyr::mutate(mat_type = "DelayedArray+HDF5Array",
-                machine_type = "30GB mem")
+                machine_type = "bc1e1bc")
 df2 = print(p2, depth = 3) %>% 
   dplyr::mutate(mat_type = "matrix",
-                machine_type = "30GB mem")
+                machine_type = "bc1e1bc")
 
-mem30_df = bind_rows(df1, df2) 
+bc1e1bc = bind_rows(df1, df2) 
 
 rm(df1, df2)
 
-df = bind_rows(mem15_df, mem30_df)
+df = bind_rows(f8fdf26, bc1e1bc)
 
 df = df %>% dplyr::mutate(
     src = trimws(src),

@@ -82,3 +82,6 @@ scater::plotPCA(obj2, colour_by = 'batch',
 
 scater::plotPCA(obj2, colour_by = 'batch',
                 run_args = list(exprs_values = 'scMerge_unsupervised2'))
+
+
+# save(p1, p2, file = "standard-4_pbmc_profile_k20_bc1e1bc.RData")
