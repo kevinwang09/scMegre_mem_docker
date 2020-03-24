@@ -1,1 +1,0 @@
-system(paste0("cp -r /home/SingleCellPlus/* ", getwd()))

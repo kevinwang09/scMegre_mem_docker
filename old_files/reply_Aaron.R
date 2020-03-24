@@ -1,5 +1,6 @@
 library(tidyverse)
-load("standard-4_pbmc_profile_k20_f8fdf26.RData")
+library(lineprof)
+load("standard-4_pbmc_profile_k20_bc1e1bc.RData")
 df1 = print(p1, depth = 3) %>% 
   dplyr::mutate(mat_type = "DelayedArray+HDF5Array",
                 machine_type = "f8fdf26")
@@ -10,7 +11,7 @@ df2 = print(p2, depth = 3) %>%
 f8fdf26 = bind_rows(df1, df2) 
 
 
-load("standard-4_pbmc_profile_k20_bc1e1bc.RData")
+load("standard-4_pbmc_profile_k20_6c5c1e5.RData")
 df1 = print(p1, depth = 3) %>% 
   dplyr::mutate(mat_type = "DelayedArray+HDF5Array",
                 machine_type = "bc1e1bc")
