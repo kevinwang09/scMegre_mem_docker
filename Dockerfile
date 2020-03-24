@@ -1,11 +1,10 @@
 # The suggested name for this image is: bioconductor/release_base.
 
-FROM bioconductor/release_core2
+FROM kevinwang09/scmerge
 
 MAINTAINER kevin.wang@sydney.edu.au
 
 ADD install.R /home/
-# ADD create_liver.R /home/rstudio/
 ADD pbmc.R /home/rstudio/
 
 # Running install
