@@ -1,5 +1,5 @@
 library(googleComputeEngineR)
-project = "scmerge"
+project = "scpworkshop"
 zone = "us-central1-a"
 
 gce_global_project(project)
@@ -8,12 +8,12 @@ gce_global_zone(zone)
 # gce_list_zones(project)
 # View(gce_list_machinetype()$items)
 
-(tag = "gcr.io/scmerge/scmerge_mem_docker:gcbuild")
+(tag = "gcr.io/scpworkshop/scmerge_mem_docker:gcbuild")
 
 vm <- gce_vm(template = "rstudio", 
-             name = "biocsing4",
-             disk_size_gb = 20,
-             predefined_type = "n1-standard-4",
+             name = "da-stand",
+             disk_size_gb = 30,
+             predefined_type = "n1-standard-1",
              dynamic_image = tag,
              user = "rstudio", 
              password = "pushu")
