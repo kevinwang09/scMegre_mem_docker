@@ -1,0 +1,118 @@
+---
+title: "PBMC tests"
+output: html_document
+---
+
+# Prepare data
+```{r, echo = FALSE}
+library(TENxPBMCData)
+library(SummarizedExperiment)
+library(scMerge)
+library(scater)
+library(DelayedArray)
+library(DelayedMatrixStats)
+library(Matrix)
+library(pryr)
+library(BiocParallel)
+library(BiocSingular)
+library(HDF5Array)
+
+system("vmstat -s --unit=M")
+
+pbmc3k <- TENxPBMCData('pbmc3k')
+pbmc4k <- TENxPBMCData('pbmc4k')
+
+unfiltered <- pbmc3k
+is.mito <- grep("MT", rowData(pbmc3k)$Symbol_TENx)
+stats <- perCellQCMetrics(pbmc3k, subsets=list(Mito=is.mito))
+high.mito <- isOutlier(stats$subsets_Mito_percent, nmads=3, type="higher")
+pbmc3k <- pbmc3k[,!high.mito]
+pbmc3k <- logNormCounts(pbmc3k)
+
+unfiltered <- pbmc4k
+is.mito <- grep("MT", rowData(pbmc4k)$Symbol_TENx)
+stats <- perCellQCMetrics(pbmc4k, subsets=list(Mito=is.mito))
+high.mito <- isOutlier(stats$subsets_Mito_percent, nmads=3, type="higher")
+pbmc4k <- pbmc4k[,!high.mito]
+pbmc4k <- logNormCounts(pbmc4k)
+
+pbmc_combine = scMerge::sce_cbind(list(pbmc3k = pbmc3k, pbmc4k = pbmc4k),
+                                  method = "intersect")
+dim(pbmc_combine)
+data("segList_ensemblGeneID")
+colnames(pbmc_combine) = paste0("gene", seq_len(ncol(pbmc_combine)))
+```
+
+# Ordinary matrix
+```{r}
+pbmc_combine_matrix = pbmc_combine
+counts(pbmc_combine_matrix) = as(counts(pbmc_combine_matrix), "matrix")
+logcounts(pbmc_combine_matrix) = as(logcounts(pbmc_combine_matrix), "matrix")
+
+t1 = Sys.time()
+pryr::mem_change({
+  obj1 <- scMerge::scMerge(
+    sce_combine = pbmc_combine_matrix,
+    ctl = segList_ensemblGeneID$human$human_scSEG,
+    kmeansK = c(10, 10),
+    assay_name = "matrix", 
+    verbose = TRUE,
+    BPPARAM = BiocParallel::SerialParam(),
+    svd_k = 20,
+    BSPARAM = BiocSingular::RandomParam(fold = Inf))
+})
+t2 = Sys.time()
+t2 - t1
+```
+
+
+# dgeMatrix
+```{r}
+pbmc_combine_dgeMatrix = pbmc_combine_matrix
+counts(pbmc_combine_dgeMatrix) = as(counts(pbmc_combine_dgeMatrix), "dgeMatrix")
+logcounts(pbmc_combine_dgeMatrix) = as(logcounts(pbmc_combine_dgeMatrix), "dgeMatrix")
+
+t3 = Sys.time()
+pryr::mem_change({
+  obj1 <- scMerge::scMerge(
+    sce_combine = pbmc_combine_dgeMatrix,
+    ctl = segList_ensemblGeneID$human$human_scSEG,
+    kmeansK = c(10, 10),
+    assay_name = "dgeMatrix", 
+    verbose = TRUE,
+    BPPARAM = BiocParallel::SerialParam(),
+    svd_k = 20,
+    BSPARAM = BiocSingular::RandomParam(fold = Inf))
+})
+t4 = Sys.time()
+t4 - t3
+```
+
+# HDF5Array
+```{r}
+pbmc_combine_DelayedArray = pbmc_combine_matrix
+counts(pbmc_combine_DelayedArray) = as(counts(pbmc_combine_DelayedArray), "HDF5Array")
+logcounts(pbmc_combine_DelayedArray) = as(logcounts(pbmc_combine_DelayedArray), "HDF5Array")
+
+t5 = Sys.time()
+pryr::mem_change({
+  obj1 <- scMerge::scMerge(
+    sce_combine = pbmc_combine_DelayedArray,
+    ctl = segList_ensemblGeneID$human$human_scSEG,
+    kmeansK = c(10, 10),
+    assay_name = "DelayedArray", 
+    verbose = TRUE,
+    BPPARAM = BiocParallel::SerialParam(),
+    svd_k = 20,
+    BSPARAM = BiocSingular::RandomParam(fold = Inf))
+})
+t6 = Sys.time()
+t6 - t5
+```
+
+
+# Session info 
+```{r}
+sessioninfo::session_info()
+```
+

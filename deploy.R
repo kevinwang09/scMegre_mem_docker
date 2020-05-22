@@ -8,11 +8,11 @@ gce_global_zone(zone)
 # gce_list_zones(project)
 # View(gce_list_machinetype()$items)
 
-(tag = "gcr.io/scpworkshop/scmerge_mem_docker:gcbuild")
+(tag = "gcr.io/scpworkshop/scmerge_docker:latest")
 
 vm <- gce_vm(template = "rstudio", 
-             name = "da-stand",
-             disk_size_gb = 30,
+             name = "v1-5",
+             disk_size_gb = 50,
              predefined_type = "n1-standard-1",
              dynamic_image = tag,
              user = "rstudio", 
